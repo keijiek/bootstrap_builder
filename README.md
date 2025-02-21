@@ -2,15 +2,19 @@
 
 [Bootstrap and Vite](https://getbootstrap.jp/docs/5.3/getting-started/vite/)をベースに、package 追加、bootstrap カスタマイズ用ファイル追加、出力ファイル名の固定、などを行いました。
 
-操作に bun.js を使います。  
-インストールしていない場合は、末尾の「Bun.js のインストール」を見てインストールしてください。  
-node を使う方はコマンドを読みかえて下さい。
+操作に bun.js か node.js を使います。  
+インストールしていない場合は、末尾の 「[BunかNodeか](#bun-か-node-か)」のセクションを見てインストールしてください。  
 
 また、下記の操作は、wsl の ubuntu の bash で試しました。  
-一応、powershell や cmd の方法も載せています。  
+一応、powershell や cmd の方法も気づいた範囲で載せていますが、  
+windows なら wsl の ubuntu を簡単に導入できるので、ぜひそれを使ってください。  
+そちらの方が、むしろ学習用の情報は多いはずです。
 
-wordpress 用と書いていますが、それ以外にも使えると思います...  
-とはいえ、それ以外の状況で bootstrap を使う理由は無いようにも思います。  
+[WSL を使用して Windows に Linux をインストールする方法](https://learn.microsoft.com/ja-jp/windows/wsl/install)
+
+wordpress 以外にも使えると思いますが  
+それ以外の状況で bootstrap を使う理由は無いようにも思います。  
+tailwindcss を使いたい...
 
 ---
 
@@ -28,8 +32,11 @@ git clone git@github.com:keijiek/bootstrap_builder.git
 # インストールされたディレクトリに移動
 cd bootstrap_builder
 
-# 必要なパッケージを自動インストール
+# 必要なパッケージをインストール
 bun i
+
+# bun ではなく node を使うなら
+npm i
 ```
 
 ### カスタマイズとビルド
@@ -37,23 +44,27 @@ bun i
 src/scss/_custom_variables.scss を編集し、次を実行してビルド
 
 ```bash
+# bun
 bun run build
+
+# node
+npm run build
 ```
 
-dist/ 下に js と css が出力されるので、それぞれ enqueue する。
+dist/ の下に js と css が出力されるので、それぞれを wordpress から enqueue する。
 
 ```php
 wp_enqueue_style(
-  'ハンドル名',
+  'bootstrap',
   get_template_directory_uri() . '/assets/bootstrap_builder/dist/index.css',
   [],
   filemtime(get_theme_file_path('assets/bootstrap_builder/dist/index.css'));
 );
 
 wp_enqueue_script(
-  'ハンドル名',
+  'bootstrap',
   get_template_directory_uri() . '/assets/bootstrap_builder/dist/index.js',
-  [],// jquery を第三引数の要素に入れた方が良い場合が多い。
+  [],// 'jquery' を依存対象に入れた方が良いかも。正常に動かない場合は試してください。
   filemtime(get_theme_file_path('assets/bootstrap_builder/dist/index.js'));
   []
 );
@@ -66,7 +77,13 @@ src/index.html を編集しながら表示を試すことができる。scss や
 ビルドとテストの繰り返しは時間を食うので、この手順で試すのが良い。
 
 ```bash
+# bun
 bun run dev
+
+# node
+npm run dev
+
+# ctrl + c で終了
 ```
 
 ### ビルドが終わったらパッケージを削除
@@ -228,7 +245,7 @@ $spacers: (
 
 bun.js は新しく、処理が早い。バージョン管理は無し。  
 node.js は古いが、そのぶん情報は多い。バージョン管理を使うのでインストールに手間を要するが volta を使えば簡単。  
-コマンドを読み替えればどちらでも使える。
+コマンドを読み替えればどちらでも使える。情報の多い node で学習し、慣れたら bun へ移行する、という学種順序が良いのかも。
 
 ## install Bun.js
 
