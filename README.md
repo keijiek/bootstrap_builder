@@ -38,6 +38,8 @@ bun i
 npm i
 ```
 
+もしも git が無いなら「[git インストール](#git-インストール)」を見てインストールしてください。
+
 ### カスタマイズとビルド
 
 src/scss/_custom_variables.scss を編集し、次を実行してビルド
@@ -327,3 +329,27 @@ npm -v
 以上。
 
 ---
+
+## git インストール
+
+もしも git が無いなら、下記の様にインストール
+
+### ubuntu
+
+```bash
+# パッケージの確認
+sudo apt list git
+
+# インストール
+sudo apt install -y git
+```
+
+### windows
+
+```bash
+# パッケージの確認(git.git を探す)
+winget search git
+
+# インストール
+winget install Git.Git
+```
