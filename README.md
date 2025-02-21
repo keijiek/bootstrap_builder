@@ -6,30 +6,64 @@
 インストールしていない場合は、末尾の「Bun.js のインストール」を見てインストールしてください。  
 node を使う方はコマンドを読みかえて下さい。
 
+また、下記の操作は、wsl の ubuntu の bash で試しました。  
+一応、powershell や cmd の方法も載せています。  
+
+wordpress 用と書いていますが、それ以外にも使えると思います...  
+とはいえ、それ以外の状況で bootstrap を使う理由は無いようにも思います。  
+
+---
+
 ## 使い方
 
-### パッケージのインストール
-
-このディレクトリ(このREADME.mdがあるディレクトリ)で次を実行し、パッケージをインストール。
+### WordPress の自作テーマディレクトリ内の好きな所に配置
 
 ```bash
+# 自作テーマディレクトリ内の、インストールしたい場所に移動。
+cd /path/to/wordpress/wp-content/themes/your-theme/assets/
+
+# git pull でインストール
+git clone git@github.com:keijiek/bootstrap_builder.git
+
+# インストールされたディレクトリに移動
+cd bootstrap_builder
+
+# 必要なパッケージを自動インストール
 bun i
 ```
 
-### カスタマイズ
+### カスタマイズとビルド
 
-src/scss/_custom_variables.scss を編集し、次を実行。
+src/scss/_custom_variables.scss を編集し、次を実行してビルド
 
 ```bash
 bun run build
 ```
 
-dist/ 下に js と css が出力されるので、それを enqueue する。
+dist/ 下に js と css が出力されるので、それぞれ enqueue する。
+
+```php
+wp_enqueue_style(
+  'ハンドル名',
+  get_template_directory_uri() . '/assets/bootstrap_builder/dist/index.css',
+  [],
+  filemtime(get_theme_file_path('assets/bootstrap_builder/dist/index.css'));
+);
+
+wp_enqueue_script(
+  'ハンドル名',
+  get_template_directory_uri() . '/assets/bootstrap_builder/dist/index.js',
+  [],// jquery を第三引数の要素に入れた方が良い場合が多い。
+  filemtime(get_theme_file_path('assets/bootstrap_builder/dist/index.js'));
+  []
+);
+```
 
 ### カスタマイズの結果をお試し
 
 下記を実行するとローカルのウェブサーバーが動くので、それをブラウザで開く。
-src/index.html を編集しながら試すことができる。scss や js の変更も反映される。
+src/index.html を編集しながら表示を試すことができる。scss や js の変更も反映される。  
+ビルドとテストの繰り返しは時間を食うので、この手順で試すのが良い。
 
 ```bash
 bun run dev
@@ -68,7 +102,7 @@ bun i bootstrap @popperjs/core
 
 ```bash
 mkdir {src,src/js,src/scss}
-touch src/index.html src/js/main.js src/scss/styles.scss vite.config.mjs
+touch src/index.html src/js/main.js src/scss/styles.scss src/scss/_cistom_variables.scss vite.config.mjs
 ```
 
 ### main.js
